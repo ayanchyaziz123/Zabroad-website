@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ZAbroad – Your Community, Everywhere</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0A0E1A;
+    --surface: #121827;
+    --card: #1A2236;
+    --accent: #F4A227;
+    --accent2: #3B8BF7;
+    --accent3: #28D99E;
+    --text: #EEF2FF;
+    --muted: #7B8BAD;
+    --border: rgba(255,255,255,0.07);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 6%;
+    background: rgba(10,14,26,0.82);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.7rem; font-weight: 900;
+    letter-spacing: -1px;
+    color: var(--text);
+  }
+  .logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a {
+    color: var(--muted); text-decoration: none; font-size: 0.9rem; font-weight: 500;
+    transition: color .2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta {
+    background: var(--accent); color: #0A0E1A;
+    padding: 10px 24px; border-radius: 100px; font-weight: 600; font-size: 0.88rem;
+    text-decoration: none; transition: transform .2s, box-shadow .2s;
+    box-shadow: 0 4px 18px rgba(244,162,39,0.35);
+  }
+  .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(244,162,39,0.5); }
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; z-index: 200; padding: 4px; }
+  .hamburger span { width: 24px; height: 2px; background: var(--text); border-radius: 2px; transition: .3s; display: block; }
+  .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+  .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  /* Mobile nav drawer */
+  .mobile-menu {
+    display: none;
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(10,14,26,0.98);
+    backdrop-filter: blur(20px);
+    z-index: 150;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity .3s ease, transform .3s ease;
+    pointer-events: none;
+  }
+  .mobile-menu.open {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: all;
+  }
+  .mobile-menu a {
+    color: var(--text); text-decoration: none;
+    font-size: 1.6rem; font-family: 'Playfair Display', serif;
+    font-weight: 700; letter-spacing: -0.5px;
+    transition: color .2s;
+  }
+  .mobile-menu a:hover { color: var(--accent); }
+  .mobile-menu .mobile-cta {
+    background: var(--accent); color: #0A0E1A;
+    padding: 14px 36px; border-radius: 100px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem; font-weight: 700;
+    margin-top: 8px;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center;
+    padding: 120px 6% 80px;
+    position: relative; overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 70% 60% at 20% 10%, rgba(59,139,247,0.18) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 50% at 80% 80%, rgba(244,162,39,0.15) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 40% at 60% 30%, rgba(40,217,158,0.08) 0%, transparent 60%);
+  }
+  .hero-globe {
+    position: absolute; right: -120px; top: 50%; transform: translateY(-50%);
+    width: 600px; height: 600px; border-radius: 50%;
+    border: 1px solid rgba(59,139,247,0.2);
+    background: radial-gradient(circle at 35% 35%, rgba(59,139,247,0.1), transparent 70%);
+    animation: spin 60s linear infinite;
+    opacity: 0.5;
+  }
+  .hero-globe::before {
+    content: ''; position: absolute; inset: 30px; border-radius: 50%;
+    border: 1px dashed rgba(244,162,39,0.15);
+  }
+  @keyframes spin { to { transform: translateY(-50%) rotate(360deg); } }
+
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(59,139,247,0.12); border: 1px solid rgba(59,139,247,0.3);
+    color: var(--accent2); padding: 7px 18px; border-radius: 100px;
+    font-size: 0.8rem; font-weight: 600; letter-spacing: .5px;
+    margin-bottom: 28px; position: relative; z-index: 1;
+    animation: fadeUp 0.6s ease both;
+  }
+  .badge-dot { width: 7px; height: 7px; background: var(--accent2); border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.4)} }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.8rem, 7vw, 5.5rem);
+    font-weight: 900; line-height: 1.05; letter-spacing: -2px;
+    position: relative; z-index: 1;
+    animation: fadeUp 0.7s .1s ease both;
+  }
+  .hero h1 em { font-style: normal; color: var(--accent); }
+  .hero h1 .blue { color: var(--accent2); }
+
+  .hero p {
+    font-size: clamp(1rem, 2vw, 1.2rem); color: var(--muted); max-width: 600px;
+    margin: 24px auto 0; line-height: 1.7;
+    position: relative; z-index: 1;
+    animation: fadeUp 0.7s .2s ease both;
+  }
+
+  /* ── FLAGS TICKER ── */
+  .flags-row {
+    display: flex; gap: 12px; margin-top: 40px; position: relative; z-index: 1;
+    animation: fadeUp 0.7s .3s ease both;
+    flex-wrap: wrap; justify-content: center;
+  }
+  .flag-pill {
+    display: flex; align-items: center; gap: 7px;
+    background: var(--card); border: 1px solid var(--border);
+    padding: 7px 14px; border-radius: 100px;
+    font-size: 0.82rem; font-weight: 500; color: var(--muted);
+    transition: border-color .2s, color .2s;
+  }
+  .flag-pill:hover { border-color: var(--accent); color: var(--text); }
+  .flag-pill .fi { font-size: 1.1rem; }
+
+  /* ── DOWNLOAD BUTTONS ── */
+  .download-section {
+    display: flex; gap: 16px; margin-top: 48px; justify-content: center; flex-wrap: wrap;
+    position: relative; z-index: 1;
+    animation: fadeUp 0.7s .4s ease both;
+  }
+  .dl-btn {
+    display: flex; align-items: center; gap: 14px;
+    background: var(--card); border: 1px solid var(--border);
+    padding: 14px 26px; border-radius: 16px;
+    text-decoration: none; color: var(--text);
+    transition: transform .2s, box-shadow .2s, border-color .2s;
+    min-width: 190px;
+  }
+  .dl-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,0.4); border-color: var(--accent2); }
+  .dl-btn.apple:hover { border-color: var(--text); }
+  .dl-btn svg { flex-shrink: 0; }
+  .dl-btn-text small { display: block; font-size: 0.7rem; color: var(--muted); font-weight: 400; }
+  .dl-btn-text strong { font-size: 1rem; font-weight: 600; }
+
+  /* ── STATS ── */
+  .stats {
+    display: flex; gap: 40px; justify-content: center; flex-wrap: wrap;
+    margin-top: 64px; position: relative; z-index: 1;
+    animation: fadeUp 0.7s .5s ease both;
+  }
+  .stat { text-align: center; }
+  .stat-num {
+    font-family: 'Playfair Display', serif; font-size: 2.4rem; font-weight: 900;
+    color: var(--text); letter-spacing: -1px;
+  }
+  .stat-num span { color: var(--accent); }
+  .stat-label { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── SECTION SHARED ── */
+  section { padding: 100px 6%; }
+  .section-label {
+    font-size: 0.75rem; font-weight: 700; letter-spacing: 3px;
+    color: var(--accent); text-transform: uppercase; margin-bottom: 16px;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3rem); font-weight: 900; letter-spacing: -1px;
+    line-height: 1.1;
+  }
+  .section-sub { color: var(--muted); font-size: 1.05rem; line-height: 1.7; margin-top: 16px; max-width: 560px; }
+  .section-header { text-align: center; margin-bottom: 64px; }
+  .section-header .section-sub { margin: 16px auto 0; }
+
+  /* ── FEATURES ── */
+  .features-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px; max-width: 1200px; margin: 0 auto;
+  }
+  .feature-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 20px; padding: 36px 32px;
+    transition: transform .25s, box-shadow .25s, border-color .25s;
+    position: relative; overflow: hidden;
+  }
+  .feature-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: var(--card-accent, var(--accent));
+    border-radius: 20px 20px 0 0;
+  }
+  .feature-card:hover { transform: translateY(-6px); box-shadow: 0 20px 48px rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.12); }
+  .feat-icon {
+    width: 52px; height: 52px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem; margin-bottom: 22px;
+  }
+  .feature-card h3 { font-size: 1.15rem; font-weight: 600; margin-bottom: 10px; }
+  .feature-card p { color: var(--muted); font-size: 0.92rem; line-height: 1.65; }
+
+  /* ── COMMUNITY MOCKUP ── */
+  .community-section {
+    background: var(--surface);
+    border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+  }
+  .community-inner {
+    display: flex; align-items: center; gap: 80px; max-width: 1200px; margin: 0 auto;
+    flex-wrap: wrap;
+  }
+  .community-text { flex: 1; min-width: 280px; }
+  .community-phone {
+    flex: 1; min-width: 280px; display: flex; justify-content: center;
+  }
+  .phone-frame {
+    width: 280px; background: #0D1120; border-radius: 40px;
+    border: 2px solid rgba(255,255,255,0.1); padding: 24px 18px;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
+    position: relative;
+  }
+  .phone-notch {
+    width: 90px; height: 22px; background: #0D1120;
+    border-radius: 0 0 16px 16px; margin: 0 auto 20px;
+    border: 2px solid rgba(255,255,255,0.1); border-top: none;
+  }
+  .phone-post {
+    background: var(--card); border-radius: 14px; padding: 14px;
+    margin-bottom: 12px; border: 1px solid var(--border);
+  }
+  .post-header { display: flex; align-items: center; gap: 9px; margin-bottom: 9px; }
+  .post-avatar {
+    width: 30px; height: 30px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; font-weight: 700; flex-shrink: 0;
+  }
+  .post-meta small { font-size: 0.65rem; color: var(--muted); display: block; }
+  .post-meta strong { font-size: 0.75rem; }
+  .post-content { font-size: 0.7rem; color: var(--muted); line-height: 1.5; }
+  .post-tag {
+    display: inline-block; padding: 2px 8px; border-radius: 100px;
+    font-size: 0.6rem; font-weight: 600; margin-top: 7px;
+  }
+  .post-actions { display: flex; gap: 12px; margin-top: 10px; }
+  .post-actions span { font-size: 0.62rem; color: var(--muted); cursor: pointer; }
+
+  /* ── HOW IT WORKS ── */
+  .steps {
+    display: flex; gap: 0; max-width: 900px; margin: 0 auto;
+    position: relative; flex-wrap: wrap; justify-content: center;
+  }
+  .steps::before {
+    content: '';
+    position: absolute; top: 28px; left: 15%; right: 15%; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+  }
+  .step { flex: 1; min-width: 200px; text-align: center; padding: 0 24px; }
+  .step-num {
+    width: 56px; height: 56px; border-radius: 50%;
+    border: 1px solid var(--border); background: var(--card);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 900;
+    margin: 0 auto 20px; color: var(--accent);
+  }
+  .step h4 { font-size: 1rem; font-weight: 600; margin-bottom: 8px; }
+  .step p { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+
+  /* ── CATEGORIES ── */
+  .categories-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px; max-width: 1100px; margin: 0 auto;
+  }
+  .cat-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 18px; padding: 30px 24px;
+    text-align: center; cursor: pointer;
+    transition: transform .2s, border-color .2s, box-shadow .2s;
+    text-decoration: none; color: var(--text); display: block;
+  }
+  .cat-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.3); border-color: var(--cat-clr, var(--accent)); }
+  .cat-emoji { font-size: 2.4rem; margin-bottom: 14px; display: block; }
+  .cat-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 6px; }
+  .cat-card p { font-size: 0.8rem; color: var(--muted); }
+
+  /* ── TESTIMONIALS ── */
+  .testimonials-section { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .testimonials-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px; max-width: 1100px; margin: 0 auto;
+  }
+  .testi-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 18px; padding: 28px;
+    transition: transform .2s;
+  }
+  .testi-card:hover { transform: translateY(-4px); }
+  .stars { color: var(--accent); font-size: 0.9rem; margin-bottom: 14px; }
+  .testi-card p { font-size: 0.9rem; color: var(--muted); line-height: 1.7; font-style: italic; }
+  .testi-author { display: flex; align-items: center; gap: 12px; margin-top: 20px; }
+  .testi-avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; font-weight: 700;
+  }
+  .testi-info small { font-size: 0.75rem; color: var(--muted); }
+  .testi-info strong { font-size: 0.88rem; display: block; }
+
+  /* ── DOWNLOAD CTA ── */
+  .cta-section {
+    text-align: center;
+    background: linear-gradient(135deg, rgba(59,139,247,0.1), rgba(244,162,39,0.08));
+    border-top: 1px solid var(--border);
+  }
+  .cta-section .section-title { max-width: 700px; margin: 0 auto; }
+  .cta-section .section-sub { max-width: 500px; margin: 20px auto 0; }
+  .cta-btns { display: flex; gap: 16px; justify-content: center; margin-top: 48px; flex-wrap: wrap; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 60px 6% 32px;
+  }
+  .footer-grid {
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px;
+    max-width: 1200px; margin: 0 auto; padding-bottom: 48px;
+    border-bottom: 1px solid var(--border);
+  }
+  .footer-brand p { color: var(--muted); font-size: 0.88rem; line-height: 1.7; margin-top: 14px; max-width: 260px; }
+  .footer-col h4 { font-size: 0.85rem; font-weight: 600; margin-bottom: 18px; }
+  .footer-col ul { list-style: none; }
+  .footer-col ul li { margin-bottom: 10px; }
+  .footer-col ul li a { color: var(--muted); text-decoration: none; font-size: 0.85rem; transition: color .2s; }
+  .footer-col ul li a:hover { color: var(--text); }
+  .footer-bottom {
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 16px;
+    padding-top: 28px; max-width: 1200px; margin: 0 auto;
+  }
+  .footer-bottom p { color: var(--muted); font-size: 0.8rem; }
+  .social-links { display: flex; gap: 14px; }
+  .social-links a {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: var(--card); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--muted); text-decoration: none; font-size: 0.85rem;
+    transition: border-color .2s, color .2s;
+  }
+  .social-links a:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    nav { padding: 16px 5%; }
+    .nav-links, .nav-cta { display: none; }
+    .hamburger { display: flex; }
+    .hero h1 { font-size: 2.6rem; }
+    .community-inner { gap: 48px; }
+    .steps::before { display: none; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    .stats { gap: 24px; }
+  }
+  @media (max-width: 480px) {
+    .footer-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Z<span>Abroad</span></div>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#community">Community</a></li>
+    <li><a href="#categories">Services</a></li>
+    <li><a href="#download">Download</a></li>
+  </ul>
+  <a href="#download" class="nav-cta">Get the App</a>
+  <div class="hamburger">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- MOBILE MENU DRAWER -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#features" class="mobile-link">Features</a>
+  <a href="#community" class="mobile-link">Community</a>
+  <a href="#categories" class="mobile-link">Services</a>
+  <a href="#download" class="mobile-link">Download</a>
+  <a href="#download" class="mobile-cta mobile-link">Get the App</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-globe"></div>
+
+  <div class="hero-badge">
+    <span class="badge-dot"></span>
+    500,000+ Expats Connected Worldwide
+  </div>
+
+  <h1>Your <em>Community</em>,<br>Wherever You <span class="blue">Roam</span></h1>
+
+  <p>ZAbroad connects immigrants, expats, and global citizens — find your people, discover opportunities, get legal help, and feel at home — anywhere in the world.</p>
+
+  <div class="flags-row">
+    <div class="flag-pill">🇮🇳 Indians in USA</div>
+    <div class="flag-pill">🇧🇩 Bangladeshis in Canada</div>
+    <div class="flag-pill">🇵🇰 Pakistanis in UK</div>
+    <div class="flag-pill">🇳🇬 Nigerians in Germany</div>
+    <div class="flag-pill">🇵🇭 Filipinos in UAE</div>
+    <div class="flag-pill">🇲🇽 Mexicans in Spain</div>
+  </div>
+
+  <div class="download-section">
+    <!-- iOS -->
+    <a href="#download" class="dl-btn apple">
+      <svg width="26" height="32" viewBox="0 0 26 32" fill="none">
+        <path d="M21.8 17.1c0-4.2 3.4-6.2 3.6-6.3-2-2.9-5-3.3-6.1-3.3-2.6-.3-5.1 1.5-6.4 1.5-1.3 0-3.4-1.5-5.6-1.5C4.2 7.6.8 9.8.8 14.5c0 2.9 1.1 5.9 2.5 7.9 1.2 1.7 2.3 3.6 4 3.6 1.6 0 2.2-1 4.2-1s2.5 1 4.2 1c1.7 0 2.8-1.7 3.9-3.4.8-1.2 1.4-2.4 1.7-3.5C21.3 19 21.8 18.1 21.8 17.1z" fill="white"/>
+        <path d="M18.1 5.3C19 4.2 19.7 2.6 19.5 1c-1.5.1-3.3.9-4.3 2.1-.9 1-1.7 2.6-1.5 4.2 1.6.1 3.3-.9 4.4-2z" fill="white"/>
+      </svg>
+      <div class="dl-btn-text">
+        <small>Download on the</small>
+        <strong>App Store</strong>
+      </div>
+    </a>
+    <!-- Android -->
+    <a href="#download" class="dl-btn">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <path d="M2.5 4.5L15 14 2.5 23.5V4.5z" fill="#3B8BF7"/>
+        <path d="M2.5 4.5L15 14l5.5-5.5L4 2 2.5 4.5z" fill="#28D99E"/>
+        <path d="M2.5 23.5L4 26l16.5-9.5L15 14 2.5 23.5z" fill="#F4A227"/>
+        <path d="M20.5 8.5L15 14l5.5 5.5L25 17V11l-4.5-2.5z" fill="#E85555"/>
+      </svg>
+      <div class="dl-btn-text">
+        <small>Get it on</small>
+        <strong>Google Play</strong>
+      </div>
+    </a>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-num">500<span>K+</span></div>
+      <div class="stat-label">Active Members</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">120<span>+</span></div>
+      <div class="stat-label">Countries</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">40<span>K+</span></div>
+      <div class="stat-label">Jobs Posted</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">4.9<span>★</span></div>
+      <div class="stat-label">App Rating</div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-header">
+    <div class="section-label">Why ZAbroad</div>
+    <h2 class="section-title">Everything You Need,<br>One Community</h2>
+    <p class="section-sub">Built by immigrants, for immigrants. We understand what it means to start fresh in a new country.</p>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card" style="--card-accent:#3B8BF7">
+      <div class="feat-icon" style="background:rgba(59,139,247,0.12); color:#3B8BF7">🌐</div>
+      <h3>Community Feed</h3>
+      <p>Post updates, ask questions, and share experiences with people from your home country living in the same city or country as you.</p>
+    </div>
+    <div class="feature-card" style="--card-accent:#F4A227">
+      <div class="feat-icon" style="background:rgba(244,162,39,0.12); color:#F4A227">💼</div>
+      <h3>Job Board</h3>
+      <p>Discover job opportunities shared by community members, employers who value diverse talent, and postings in your native language.</p>
+    </div>
+    <div class="feature-card" style="--card-accent:#28D99E">
+      <div class="feat-icon" style="background:rgba(40,217,158,0.12); color:#28D99E">🏠</div>
+      <h3>Housing & Rentals</h3>
+      <p>Find trusted housing from verified community landlords. No language barrier, no discrimination — just safe, affordable homes.</p>
+    </div>
+    <div class="feature-card" style="--card-accent:#E85555">
+      <div class="feat-icon" style="background:rgba(232,85,85,0.12); color:#E85555">⚖️</div>
+      <h3>Immigration Attorneys</h3>
+      <p>Connect with verified immigration lawyers who speak your language and specialize in visas, green cards, and citizenship.</p>
+    </div>
+    <div class="feature-card" style="--card-accent:#A855F7">
+      <div class="feat-icon" style="background:rgba(168,85,247,0.12); color:#A855F7">💬</div>
+      <h3>Native Language Chat</h3>
+      <p>Message and connect in Hindi, Bengali, Urdu, Tagalog, Spanish, and 80+ languages. Feel at home in every conversation.</p>
+    </div>
+    <div class="feature-card" style="--card-accent:#F97316">
+      <div class="feat-icon" style="background:rgba(249,115,22,0.12); color:#F97316">📢</div>
+      <h3>Events & Meetups</h3>
+      <p>Discover cultural festivals, community gatherings, professional networking events, and local meetups near you.</p>
+    </div>
+  </div>
+</section>
+
+<!-- COMMUNITY MOCKUP -->
+<section class="community-section" id="community">
+  <div class="community-inner">
+    <div class="community-text">
+      <div class="section-label">The Feed</div>
+      <h2 class="section-title">Your Diaspora,<br>Alive & Thriving</h2>
+      <p class="section-sub">See what's happening in your community — job leads, housing tips, cultural events, visa news — all in one scroll.</p>
+      <ul style="margin-top:28px; list-style:none; display:flex; flex-direction:column; gap:14px;">
+        <li style="display:flex; align-items:center; gap:12px; color:var(--muted); font-size:0.9rem;">
+          <span style="color:var(--accent2); font-size:1.2rem;">✓</span> Filter posts by your home country or city
+        </li>
+        <li style="display:flex; align-items:center; gap:12px; color:var(--muted); font-size:0.9rem;">
+          <span style="color:var(--accent2); font-size:1.2rem;">✓</span> React, comment, and share in your language
+        </li>
+        <li style="display:flex; align-items:center; gap:12px; color:var(--muted); font-size:0.9rem;">
+          <span style="color:var(--accent2); font-size:1.2rem;">✓</span> Tag posts as Jobs, Housing, Legal, Events & more
+        </li>
+        <li style="display:flex; align-items:center; gap:12px; color:var(--muted); font-size:0.9rem;">
+          <span style="color:var(--accent2); font-size:1.2rem;">✓</span> DM anyone directly with end-to-end encryption
+        </li>
+      </ul>
+    </div>
+    <div class="community-phone">
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+
+        <!-- Post 1 -->
+        <div class="phone-post">
+          <div class="post-header">
+            <div class="post-avatar" style="background:rgba(59,139,247,0.2);color:#3B8BF7">RK</div>
+            <div class="post-meta">
+              <strong>Rahul Khanna</strong>
+              <small>🇮🇳 Indian in NYC · 2h ago</small>
+            </div>
+          </div>
+          <div class="post-content">Software engineer roles open at my company! Sponsoring H1B. DM me for referral. We need 3 people ASAP 🙏</div>
+          <span class="post-tag" style="background:rgba(244,162,39,0.15);color:var(--accent)">💼 Job</span>
+          <div class="post-actions">
+            <span>❤️ 48</span><span>💬 12</span><span>🔗 Share</span>
+          </div>
+        </div>
+
+        <!-- Post 2 -->
+        <div class="phone-post">
+          <div class="post-header">
+            <div class="post-avatar" style="background:rgba(40,217,158,0.2);color:#28D99E">TI</div>
+            <div class="post-meta">
+              <strong>Tahmina Islam</strong>
+              <small>🇧🇩 Bengali in Toronto · 5h ago</small>
+            </div>
+          </div>
+          <div class="post-content">1-bed apartment in Scarborough, $1,450/mo. South Asian family preferred. Very safe area, near mosque 🏠</div>
+          <span class="post-tag" style="background:rgba(40,217,158,0.15);color:#28D99E">🏠 Housing</span>
+          <div class="post-actions">
+            <span>❤️ 23</span><span>💬 7</span><span>🔗 Share</span>
+          </div>
+        </div>
+
+        <!-- Post 3 -->
+        <div class="phone-post">
+          <div class="post-header">
+            <div class="post-avatar" style="background:rgba(232,85,85,0.2);color:#E85555">AS</div>
+            <div class="post-meta">
+              <strong>Atty. Sofia Cruz</strong>
+              <small>🇵🇭 Immigration Lawyer · 1d ago</small>
+            </div>
+          </div>
+          <div class="post-content">Free consultation this Saturday for green card questions. Fil-Am community welcome. Book link in bio ⚖️</div>
+          <span class="post-tag" style="background:rgba(232,85,85,0.15);color:#E85555">⚖️ Legal</span>
+          <div class="post-actions">
+            <span>❤️ 91</span><span>💬 34</span><span>🔗 Share</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CATEGORIES -->
+<section id="categories">
+  <div class="section-header">
+    <div class="section-label">Services</div>
+    <h2 class="section-title">Find What You Need</h2>
+    <p class="section-sub">ZAbroad is more than a social network — it's your complete toolkit for life abroad.</p>
+  </div>
+  <div class="categories-grid">
+    <a href="#download" class="cat-card" style="--cat-clr:#3B8BF7">
+      <span class="cat-emoji">💼</span>
+      <h3>Jobs & Careers</h3>
+      <p>Full-time, part-time, H1B sponsored, and remote opportunities</p>
+    </a>
+    <a href="#download" class="cat-card" style="--cat-clr:#28D99E">
+      <span class="cat-emoji">🏠</span>
+      <h3>Housing</h3>
+      <p>Apartments, rooms, short-term stays from trusted community hosts</p>
+    </a>
+    <a href="#download" class="cat-card" style="--cat-clr:#E85555">
+      <span class="cat-emoji">⚖️</span>
+      <h3>Immigration Attorneys</h3>
+      <p>Visa, green card, citizenship help in your native language</p>
+    </a>
+    <a href="#download" class="cat-card" style="--cat-clr:#F4A227">
+      <span class="cat-emoji">🎉</span>
+      <h3>Events & Culture</h3>
+      <p>Festivals, Eid, Diwali, Tet, and community celebrations near you</p>
+    </a>
+    <a href="#download" class="cat-card" style="--cat-clr:#A855F7">
+      <span class="cat-emoji">🛒</span>
+      <h3>Marketplace</h3>
+      <p>Buy and sell goods within your trusted community network</p>
+    </a>
+    <a href="#download" class="cat-card" style="--cat-clr:#F97316">
+      <span class="cat-emoji">🏫</span>
+      <h3>Education & Tutors</h3>
+      <p>Language classes, credential evaluation, and academic support</p>
+    </a>
+    <a href="#download" class="cat-card" style="--cat-clr:#06B6D4">
+      <span class="cat-emoji">🏥</span>
+      <h3>Healthcare</h3>
+      <p>Doctors and clinics that speak your language and respect your culture</p>
+    </a>
+    <a href="#download" class="cat-card" style="--cat-clr:#EC4899">
+      <span class="cat-emoji">👨‍👩‍👧</span>
+      <h3>Family Support</h3>
+      <p>Childcare, elder care, and family settlement resources</p>
+    </a>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section style="background: var(--surface); border-top: 1px solid var(--border);">
+  <div class="section-header">
+    <div class="section-label">Get Started</div>
+    <h2 class="section-title">Up & Running in Minutes</h2>
+  </div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h4>Download the App</h4>
+      <p>Available free on iOS App Store and Google Play Store worldwide.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h4>Create Your Profile</h4>
+      <p>Set your home country, current city, and the communities you want to join.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h4>Join Your Community</h4>
+      <p>Instantly connect with thousands of people who share your background and experience.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <h4>Post & Discover</h4>
+      <p>Share jobs, find housing, get legal help, and make lifelong connections.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials-section">
+  <div class="section-header">
+    <div class="section-label">Stories</div>
+    <h2 class="section-title">Real People. Real Impact.</h2>
+  </div>
+  <div class="testimonials-grid">
+    <div class="testi-card">
+      <div class="stars">★★★★★</div>
+      <p>"I landed my first US job through ZAbroad within 3 weeks of moving to New Jersey. A fellow Indian engineer posted the referral and changed my life."</p>
+      <div class="testi-author">
+        <div class="testi-avatar" style="background:rgba(59,139,247,0.2);color:#3B8BF7">PV</div>
+        <div class="testi-info">
+          <strong>Priya Venkatesh</strong>
+          <small>🇮🇳 Mumbai → New Jersey, USA</small>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="stars">★★★★★</div>
+      <p>"Found a halal-friendly apartment in Toronto through the housing board in 2 days. The landlord was also Bangladeshi — it felt like home immediately."</p>
+      <div class="testi-author">
+        <div class="testi-avatar" style="background:rgba(40,217,158,0.2);color:#28D99E">MR</div>
+        <div class="testi-info">
+          <strong>Mohammad Rahman</strong>
+          <small>🇧🇩 Dhaka → Toronto, Canada</small>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="stars">★★★★★</div>
+      <p>"The immigration attorney I found on ZAbroad helped me get my green card approved in record time. She spoke Tagalog — I cried with relief."</p>
+      <div class="testi-author">
+        <div class="testi-avatar" style="background:rgba(232,85,85,0.2);color:#E85555">JD</div>
+        <div class="testi-info">
+          <strong>Josie Dela Cruz</strong>
+          <small>🇵🇭 Manila → Los Angeles, USA</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DOWNLOAD CTA -->
+<section class="cta-section" id="download">
+  <div class="section-label">Download Now</div>
+  <h2 class="section-title">Start Connecting<br>With Your Community Today</h2>
+  <p class="section-sub">Free forever for community members. Download ZAbroad and never feel alone abroad again.</p>
+  <div class="cta-btns">
+    <a href="#" class="dl-btn apple" style="min-width:210px;">
+      <svg width="26" height="32" viewBox="0 0 26 32" fill="none">
+        <path d="M21.8 17.1c0-4.2 3.4-6.2 3.6-6.3-2-2.9-5-3.3-6.1-3.3-2.6-.3-5.1 1.5-6.4 1.5-1.3 0-3.4-1.5-5.6-1.5C4.2 7.6.8 9.8.8 14.5c0 2.9 1.1 5.9 2.5 7.9 1.2 1.7 2.3 3.6 4 3.6 1.6 0 2.2-1 4.2-1s2.5 1 4.2 1c1.7 0 2.8-1.7 3.9-3.4.8-1.2 1.4-2.4 1.7-3.5C21.3 19 21.8 18.1 21.8 17.1z" fill="white"/>
+        <path d="M18.1 5.3C19 4.2 19.7 2.6 19.5 1c-1.5.1-3.3.9-4.3 2.1-.9 1-1.7 2.6-1.5 4.2 1.6.1 3.3-.9 4.4-2z" fill="white"/>
+      </svg>
+      <div class="dl-btn-text">
+        <small>Download on the</small>
+        <strong>App Store</strong>
+      </div>
+    </a>
+    <a href="#" class="dl-btn" style="min-width:210px;">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <path d="M2.5 4.5L15 14 2.5 23.5V4.5z" fill="#3B8BF7"/>
+        <path d="M2.5 4.5L15 14l5.5-5.5L4 2 2.5 4.5z" fill="#28D99E"/>
+        <path d="M2.5 23.5L4 26l16.5-9.5L15 14 2.5 23.5z" fill="#F4A227"/>
+        <path d="M20.5 8.5L15 14l5.5 5.5L25 17V11l-4.5-2.5z" fill="#E85555"/>
+      </svg>
+      <div class="dl-btn-text">
+        <small>Get it on</small>
+        <strong>Google Play</strong>
+      </div>
+    </a>
+  </div>
+  <p style="color:var(--muted); font-size:0.78rem; margin-top:28px;">Free to download · Available in 80+ languages · No credit card required</p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="logo">Z<span>Abroad</span></div>
+      <p>Connecting immigrant communities worldwide. Find jobs, housing, legal help, and your people — wherever life takes you.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Product</h4>
+      <ul>
+        <li><a href="#">Community Feed</a></li>
+        <li><a href="#">Job Board</a></li>
+        <li><a href="#">Housing</a></li>
+        <li><a href="#">Find Attorneys</a></li>
+        <li><a href="#">Events</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#">About Us</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="#">Press</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Legal</h4>
+      <ul>
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Terms of Service</a></li>
+        <li><a href="#">Community Guidelines</a></li>
+        <li><a href="#">Cookie Policy</a></li>
+        <li><a href="#">Accessibility</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 ZAbroad Inc. All rights reserved. Made with ❤️ for every immigrant.</p>
+    <div class="social-links">
+      <a href="#" title="Twitter">𝕏</a>
+      <a href="#" title="Instagram">📷</a>
+      <a href="#" title="Facebook">f</a>
+      <a href="#" title="LinkedIn">in</a>
+      <a href="#" title="YouTube">▶</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ── HAMBURGER TOGGLE ──
+  const hamburger = document.querySelector('.hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+
+  function openMenu() {
+    hamburger.classList.add('open');
+    mobileMenu.style.display = 'flex';
+    setTimeout(() => mobileMenu.classList.add('open'), 10);
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMenu() {
+    hamburger.classList.remove('open');
+    mobileMenu.classList.remove('open');
+    document.body.style.overflow = '';
+    setTimeout(() => { mobileMenu.style.display = 'none'; }, 300);
+  }
+
+  hamburger.addEventListener('click', () => {
+    mobileMenu.classList.contains('open') ? closeMenu() : openMenu();
+  });
+
+  // Close when any mobile link is tapped
+  document.querySelectorAll('.mobile-link').forEach(link => {
+    link.addEventListener('click', closeMenu);
+  });
+
+  // Close on backdrop tap (outside menu links)
+  mobileMenu.addEventListener('click', (e) => {
+    if (e.target === mobileMenu) closeMenu();
+  });
+
+  // ── SCROLL REVEAL ──
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.feature-card, .cat-card, .testi-card, .step').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(24px)';
+    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
